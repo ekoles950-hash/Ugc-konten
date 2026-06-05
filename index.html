@@ -1,361 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { initializeApp } from 'firebase/app';
-import { getAuth, onAuthStateChanged, signInWithCustomToken, signInAnonymously } from 'firebase/auth';
-import { getFirestore, collection, addDoc, query, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
-import { 
-  Download, 
-  Upload, 
-  Image as ImageIcon, 
-  Sparkles, 
-  AlertCircle, 
-  User, 
-  Trash2,
-  CheckCircle2,
-  RefreshCcw
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Warung Kopi Siap Antar & Top Up</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght=400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes jalan-maju { 0% { transform: translateX(-10px) scaleX(-1); } 50% { transform: translateX(10px) scaleX(-1); } 100% { transform: translateX(-10px) scaleX(-1); } }
+        .animasi-jalan-maju { animation: jalan-maju 1.5s infinite ease-in-out; display: inline-block; }
+        @keyframes lompat-jalan { 0%, 100% { transform: translateY(0) scaleX(-1); } 50% { transform: translateY(-8px) scaleX(-1); } }
+        .animasi-kurir-jalan { animation: lompat-jalan 0.6s infinite; }
+        .kurir-diam { transform: scaleX(-1); }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .input-dark { background-color: #1E293B; border: 1px solid #334155; color: white; transition: 0.3s; }
+        .input-dark:focus { border-color: #3B82F6; outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
+        .wallet-card { background: #1E293B; border: 2px solid #334155; cursor: pointer; transition: 0.3s; width: 100%; }
+        .wallet-card.active { border-color: #3B82F6; background: #1E3A8A; transform: scale(1.02); }
+        .nominal-card { background: #1E293B; border: 1px solid #334155; cursor: pointer; transition: 0.2s; }
+        .nominal-card.active { border-color: #10B981; background: #064E3B; }
+    </style>
+</head>
+<body class="bg-stone-100 pb-24">
 
-// Konfigurasi Firebase & Global Variables dari Environment
-const firebaseConfig = JSON.parse(window.__firebase_config || '{}');
-const appId = typeof window.__app_id !== 'undefined' ? window.__app_id : 'ugc-generator-default';
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const App = () => {
-  const [user, setUser] = useState(null);
-  const [productImg, setProductImg] = useState(null);
-  const [modelImg, setModelImg] = useState(null);
-  const [productPreview, setProductPreview] = useState(null);
-  const [modelPreview, setModelPreview] = useState(null);
-  const [description, setDescription] = useState('');
-  const [ratio, setRatio] = useState('portrait');
-  const [results, setResults] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
-
-  // 1. Inisialisasi Autentikasi (Login Otomatis)
-  useEffect(() => {
-    const initAuth = async () => {
-      try {
-        if (typeof window.__initial_auth_token !== 'undefined' && window.__initial_auth_token) {
-          await signInWithCustomToken(auth, window.__initial_auth_token);
-        } else {
-          await signInAnonymously(auth);
-        }
-      } catch (err) {
-        console.error("Auth error:", err);
-        setError("Gagal melakukan login otomatis. Coba segarkan halaman.");
-      }
-    };
-
-    initAuth();
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // 2. Sinkronisasi Firestore (Simpan Hasil)
-  useEffect(() => {
-    if (!user) return;
-    
-    // Path sesuai aturan: /artifacts/{appId}/users/{userId}/{collectionName}
-    const resultsRef = collection(db, 'artifacts', appId, 'users', user.uid, 'generated_ugc');
-    const q = query(resultsRef);
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Urutkan berdasarkan waktu terbaru di memori
-      setResults(data.sort((a, b) => b.createdAt - a.createdAt));
-    }, (err) => {
-      console.error("Firestore error:", err);
-    });
-
-    return () => unsubscribe();
-  }, [user]);
-
-  const handleFileChange = (e, setter, previewSetter) => {
-    const file = e.target.files[0];
-    if (file) {
-      setter(file);
-      const reader = new FileReader();
-      reader.onloadend = () => previewSetter(reader.result);
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const fileToBase64 = (file) => new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-  });
-
-  // 3. Fungsi Utama Generate (Tanpa Manual API Key)
-  const generateUGC = async () => {
-    if (!productImg || !modelImg) {
-      setError("Mohon unggah foto produk dan foto model wajah.");
-      return;
-    }
-    if (!user) {
-      setError("Sesi login belum siap. Tunggu sebentar...");
-      return;
-    }
-
-    setLoading(true);
-    setError(null);
-
-    const apiKey = ""; // Disediakan otomatis oleh runtime
-    const modelName = "gemini-2.5-flash-image-preview";
-    const ratios = {
-      portrait: "9:16 (Potrait)",
-      vertical: "4:5 (Vertical)",
-      square: "1:1 (Square)"
-    };
-
-    try {
-      const productBase64 = await fileToBase64(productImg);
-      const modelBase64 = await fileToBase64(modelImg);
-
-      const prompt = `FOTO UGC PROFESIONAL. Tampilkan model yang WAJAHNYA SANGAT IDENTIK dengan gambar model referensi. Model tersebut harus sedang memegang atau menggunakan produk dari gambar produk utama dengan pose alami. Gaya: Kamera Sony mirrorless, detail kulit ultra-realistis, pencahayaan sinematik. Rasio ${ratios[ratio]}. ${description ? 'Konteks: ' + description : ''}. JANGAN ADA WATERMARK, TEKS DISTORSI, ATAU CACAT FISIK.`;
-
-      // Implementasi Exponential Backoff untuk API Call
-      let response;
-      let delay = 1000;
-      for (let i = 0; i < 3; i++) {
-        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            contents: [{
-              parts: [
-                { text: prompt },
-                { inlineData: { mimeType: "image/png", data: productBase64 } },
-                { inlineData: { mimeType: "image/png", data: modelBase64 } }
-              ]
-            }],
-            generationConfig: { responseModalities: ["IMAGE"] }
-          })
-        });
-
-        if (response.ok) break;
-        await new Promise(r => setTimeout(r, delay));
-        delay *= 2;
-      }
-
-      if (!response.ok) {
-        const errData = await response.json();
-        throw new Error(errData.error?.message || `Error ${response.status}: Gagal memproses gambar.`);
-      }
-
-      const result = await response.json();
-      const imagePart = result.candidates?.[0]?.content?.parts?.find(p => p.inlineData);
-      
-      if (!imagePart) throw new Error("AI tidak mengembalikan gambar. Coba deskripsi yang lebih sederhana.");
-
-      const base64Data = `data:image/png;base64,${imagePart.inlineData.data}`;
-
-      // Simpan hasil ke Firestore agar tidak hilang saat refresh
-      const resultsRef = collection(db, 'artifacts', appId, 'users', user.uid, 'generated_ugc');
-      await addDoc(resultsRef, {
-        url: base64Data,
-        createdAt: Date.now(),
-        type: 'UGC'
-      });
-
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const deleteResult = async (docId) => {
-    try {
-      await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'generated_ugc', docId));
-    } catch (err) {
-      setError("Gagal menghapus gambar.");
-    }
-  };
-
-  return (
-    <div className="min-h-screen bg-neutral-950 text-neutral-100 font-sans p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
-        
-        {/* Header dengan Status Login */}
-        <header className="flex flex-col md:flex-row justify-between items-center mb-10 gap-4 border-b border-neutral-800 pb-6">
-          <div className="text-center md:text-left">
-            <h1 className="text-4xl font-black bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent italic">
-              UGC PRO AI
-            </h1>
-            <p className="text-neutral-500 text-sm mt-1 uppercase tracking-widest font-bold">Smart Affiliate Content</p>
-          </div>
-          
-          <div className="flex items-center gap-4 bg-neutral-900 px-4 py-2 rounded-2xl border border-neutral-800">
-            <div className={`w-3 h-3 rounded-full ${user ? 'bg-green-500' : 'bg-yellow-500 animate-pulse'}`}></div>
-            <div className="flex flex-col">
-              <span className="text-[10px] text-neutral-500 uppercase font-bold">Status Akun</span>
-              <span className="text-xs font-mono">{user ? `USER-${user.uid.substring(0,8)}` : 'Menghubungkan...'}</span>
-            </div>
-            <User className="w-5 h-5 text-neutral-600 ml-2" />
-          </div>
-        </header>
-
-        {error && (
-          <div className="mb-6 p-4 bg-red-950/40 border border-red-500/50 rounded-2xl flex items-center gap-3 text-red-200 animate-in fade-in slide-in-from-top-4 duration-300">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <p className="text-sm">{error}</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          
-          {/* Panel Kiri: Input */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-3">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-tighter">1. Foto Produk</label>
-                <div 
-                  className="relative h-44 rounded-3xl bg-neutral-900 border-2 border-dashed border-neutral-800 hover:border-purple-500/50 transition-all cursor-pointer overflow-hidden group"
-                  onClick={() => document.getElementById('pIn').click()}
-                >
-                  {productPreview ? (
-                    <img src={productPreview} className="w-full h-full object-cover" alt="Product" />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-neutral-600">
-                      <Upload className="w-6 h-6 mb-2 group-hover:text-purple-500 transition-colors" />
-                      <span className="text-[10px] font-bold">UNGGAH PRODUK</span>
-                    </div>
-                  )}
-                  <input id="pIn" type="file" className="hidden" onChange={(e) => handleFileChange(e, setProductImg, setProductPreview)} />
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <label className="text-xs font-bold text-neutral-500 uppercase tracking-tighter">2. Foto Wajah</label>
-                <div 
-                  className="relative h-44 rounded-3xl bg-neutral-900 border-2 border-dashed border-neutral-800 hover:border-blue-500/50 transition-all cursor-pointer overflow-hidden group"
-                  onClick={() => document.getElementById('mIn').click()}
-                >
-                  {modelPreview ? (
-                    <img src={modelPreview} className="w-full h-full object-cover" alt="Face" />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center h-full text-neutral-600">
-                      <Upload className="w-6 h-6 mb-2 group-hover:text-blue-500 transition-colors" />
-                      <span className="text-[10px] font-bold">UNGGAH WAJAH</span>
-                    </div>
-                  )}
-                  <input id="mIn" type="file" className="hidden" onChange={(e) => handleFileChange(e, setModelImg, setModelPreview)} />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-neutral-900 rounded-[2rem] p-8 border border-neutral-800 space-y-6 shadow-2xl">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-500 uppercase">Deskripsi Suasana</label>
-                <textarea 
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-neutral-950 border border-neutral-800 rounded-2xl p-4 text-sm focus:ring-2 focus:ring-purple-500 outline-none min-h-[100px] transition-all"
-                  placeholder="Contoh: Sedang berdiri di depan kafe estetik, cahaya matahari sore..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-500 uppercase">Pilih Rasio</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['portrait', 'vertical', 'square'].map((r) => (
-                    <button
-                      key={r}
-                      onClick={() => setRatio(r)}
-                      className={`py-3 rounded-xl text-[10px] font-black uppercase transition-all ${ratio === r ? 'bg-purple-600 text-white shadow-lg shadow-purple-900/40' : 'bg-neutral-950 text-neutral-600 border border-neutral-800'}`}
-                    >
-                      {r === 'portrait' ? '9:16' : r === 'vertical' ? '4:5' : '1:1'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <button 
-                onClick={generateUGC}
-                disabled={loading || !user}
-                className="w-full py-5 rounded-2xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-sm tracking-widest shadow-xl transition-all disabled:opacity-50 flex items-center justify-center gap-3 uppercase active:scale-95"
-              >
-                {loading ? (
-                  <>
-                    <RefreshCcw className="w-5 h-5 animate-spin" />
-                    Memproses Gambar...
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-5 h-5" />
-                    Generate Foto UGC
-                  </>
-                )}
-              </button>
-            </div>
-          </div>
-
-          {/* Panel Kanan: Hasil */}
-          <div className="lg:col-span-7">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black flex items-center gap-3 italic">
-                GALERI HASIL <CheckCircle2 className="w-5 h-5 text-green-500" />
-              </h2>
-              <span className="text-[10px] font-bold text-neutral-500 bg-neutral-900 px-3 py-1 rounded-full border border-neutral-800 uppercase tracking-widest">
-                Tersimpan di Cloud
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 overflow-y-auto max-h-[70vh] pr-2 custom-scrollbar">
-              {results.length === 0 && !loading ? (
-                <div className="col-span-full h-80 rounded-[2.5rem] bg-neutral-900/30 border border-dashed border-neutral-800 flex flex-col items-center justify-center text-neutral-700">
-                  <ImageIcon className="w-12 h-12 mb-4 opacity-10" />
-                  <p className="text-sm font-bold uppercase tracking-widest opacity-30">Belum ada hasil</p>
-                </div>
-              ) : (
-                results.map((res) => (
-                  <div key={res.id} className="group relative bg-neutral-900 rounded-3xl overflow-hidden border border-neutral-800 shadow-xl transition-all hover:border-purple-500/40 animate-in zoom-in-95 duration-500">
-                    <img src={res.url} className="w-full h-auto" alt="AI Generated UGC" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-6">
-                      <div className="flex justify-between items-center gap-3">
-                        <button 
-                          onClick={() => deleteResult(res.id)}
-                          className="p-3 bg-red-600/20 text-red-500 rounded-2xl hover:bg-red-600 hover:text-white transition-all backdrop-blur-md"
-                        >
-                          <Trash2 className="w-5 h-5" />
-                        </button>
-                        <a 
-                          href={res.url} 
-                          download={`UGC_${res.id}.png`}
-                          className="flex-1 py-3 bg-white text-black rounded-2xl font-bold text-xs text-center flex items-center justify-center gap-2 hover:bg-purple-500 hover:text-white transition-all"
-                        >
-                          <Download className="w-4 h-4" /> DOWNLOAD
-                        </a>
-                      </div>
-                    </div>
-                  </div>
-                ))
-              )}
-              {loading && (
-                <div className="group relative bg-neutral-900 rounded-3xl overflow-hidden border border-purple-500/50 flex flex-col items-center justify-center h-[400px] animate-pulse">
-                  <RefreshCcw className="w-10 h-10 text-purple-500 animate-spin mb-4" />
-                  <p className="text-[10px] font-black uppercase text-purple-400">Sedang Merender Foto...</p>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <style dangerouslySetInnerHTML={{ __html: `
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #262626; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #404040; }
-      `}} />
+    <div id="toast" class="fixed top-6 left-1/2 transform -translate-x-1/2 -translate-y-24 opacity-0 z-[100] transition-all duration-300 pointer-events-none w-[90%] max-w-sm">
+        <div id="toast-content" class="px-6 py-3 rounded-full shadow-2xl text-sm font-bold text-white flex items-center justify-center gap-2"></div>
     </div>
-  );
-};
 
-export default App;
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg overflow-hidden border border-stone-200 relative">
+        <div class="bg-[#292524] text-amber-50 p-4 sticky top-0 z-10 shadow-md border-b-4 border-[#d97706] relative" id="header-utama">
+            <h1 class="text-xl font-extrabold text-center tracking-wide text-[#f59e0b] leading-snug">☕PINGIN NGOPI KARO UDUT TAPI MAGER WARUNG KOPI SIAP ANTAR</h1>
+            <p class="text-center text-sm text-stone-200 mt-1"> <span class="animasi-jalan-maju">🚶‍♀️</span></p>
+            <button onclick="bukaModalPin()" class="absolute right-4 top-1/2 -translate-y-1/2 text-xl opacity-60 hover:opacity-100 transition duration-300">⚙️</button>
+        </div>
+
+        <div class="p-4 bg-stone-50 min-h-screen" id="halaman-beranda">
+            <h2 class="text-lg font-bold text-stone-800 mb-3 sticky top-[92px] bg-stone-50 z-10 pt-2 pb-1">Daftar Menu</h2>
+            <div id="kategori-container" class="flex gap-2 overflow-x-auto hide-scroll mb-4 pb-2 border-b-2 border-stone-200 sticky top-[132px] bg-stone-50 z-10"></div>
+            <div id="ruang-menu" class="grid grid-cols-2 gap-4"></div>
+        </div>
+
+        <!-- Navigasi Bawah -->
+        <div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-[#1a1f2e] border-t border-gray-800 shadow-[0_-10px_20px_-5px_rgba(0,0,0,0.5)] z-40 flex justify-around items-center px-4 py-3 pb-safe rounded-t-3xl" id="nav-bawah">
+            <button onclick="bukaModalLacak()" class="flex flex-col items-center text-gray-400 hover:text-white transition relative">
+                <span class="text-2xl">🔍</span><span class="text-[9px] font-extrabold mt-1 tracking-wide">LACAK</span>
+            </button>
+            <button onclick="bukaBeranda()" class="flex flex-col items-center text-[#22c55e] hover:text-green-400 transition relative bg-[#1f2937] p-3 rounded-2xl -mt-8 shadow-lg border border-gray-700">
+                <span class="text-3xl">🏠</span><span class="text-[9px] font-extrabold mt-1 tracking-wide text-white">BERANDA</span>
+            </button>
+            <button onclick="bukaTopUp()" class="flex flex-col items-center text-gray-400 hover:text-white transition relative">
+                <span class="text-2xl">💳</span><span class="text-[9px] font-extrabold mt-1 tracking-wide text-center">TOP UP<br>E-WALLET</span>
+            </button>
+            <button onclick="bukaCheckout()" class="flex flex-col items-center text-gray-400 hover:text-white transition relative pr-2">
+                <span class="text-2xl">🛒</span><span class="text-[9px] font-extrabold mt-1 tracking-wide">KERANJANG</span>
+                <span id="jumlah-item-bawah" class="absolute -top-1 right-0 bg-red-500 text-white text-[10px] px-1.5 py-0.5 rounded-full font-bold shadow-sm hidden">0</span>
+            </button>
+        </div>
+
+        <!-- Modals tetap ada di sini (seperti kode asli Anda) -->
+        <div id="modal-lacak" class="hidden fixed inset-0 bg-black/80 z-50 flex justify-center items-center p-5">...</div>
+        <div id="modal-checkout" class="hidden fixed inset-0 bg-black/60 z-50 flex justify-center items-end sm:items-center">...</div>
+        <div id="modal-pin" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">...</div>
+        <div id="modal-admin-status" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5">...</div>
+        <div id="modal-toko-tutup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">...</div>
+        <div id="modal-success-topup" class="hidden fixed inset-0 bg-black/80 z-[100] flex justify-center items-center p-5 backdrop-blur-sm">...</div>
+    </div>
+
+    <script>
+        const PIN_RAHASIA = '1234';
+        const clientDB = window.supabase.createClient('https://butydxuauhtvwojvpixt.supabase.co', 'sb_publishable_yO2CBmW5iJ8UKXw802hvXA_nAz3gr9X');
+        const TELE_TOKEN_KOPI = '8854342299:AAF3dBZvDDItaPS08hhYI_-0Q4ccm-dKgPs';
+        const TELE_ID_KOPI = '8498622906';
+        let keranjang = JSON.parse(localStorage.getItem('keranjangWarungBasecamp')) || [];
+        let semuaMenuDB = [];
+
+        // FUNGSI TOP UP BARU
+        function bukaTopUp() {
+            window.location.href = 'https://grabwarung.mkz.my.id/index.php';
+        }
+
+        // FUNGSI LAINNYA (Sama persis seperti kode lama Anda)
+        function bukaBeranda() { window.location.reload(); }
+        
+        async function ambilDataMenu() {
+            const { data } = await clientDB.from('menu_warung').select('*').order('nama_menu', { ascending: true });
+            if(data) { semuaMenuDB = data; renderMenu(); }
+        }
+
+        function renderMenu() {
+            const ruangMenu = document.getElementById('ruang-menu');
+            ruangMenu.innerHTML = semuaMenuDB.map(item => `
+                <div class="bg-white rounded-xl shadow-sm border p-3">
+                    <h3 class="font-bold text-stone-800 text-sm">${item.nama_menu}</h3>
+                    <p class="text-[#d97706] font-extrabold text-sm mt-2">Rp ${item.harga.toLocaleString('id-ID')}</p>
+                    <button onclick="tambahKeKeranjang('${item.nama_menu.replace(/'/g, "\\'")}', ${item.harga})" class="mt-2 w-full bg-[#d97706] text-white py-2 rounded-lg text-xs font-bold">BELI</button>
+                </div>
+            `).join('');
+        }
+        
+        // Pastikan Anda memanggil fungsi ini saat load
+        ambilDataMenu();
+        
+        // ... (Sertakan seluruh sisa script fungsi asli Anda disini)
+    </script>
+</body>
+</html>
