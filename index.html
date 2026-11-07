@@ -7,7 +7,6 @@
 
 <style>
 :root {
-  /* ATUR POSISI FITUR DI SINI */ 
   --countdown-top: 40%;
   --countdown-left: 60%;
   --countdown-width: 50%;
@@ -86,7 +85,6 @@ body {
 }
 
 /* SLIDE 1 */
-
 .guest-box {
   color: white;
   text-shadow: 0 2px 8px #000;
@@ -116,7 +114,6 @@ body {
 }
 
 /* SLIDE 3 */
-
 .instagram-buttons {
   position: absolute;
   top: var(--instagram-top);
@@ -139,11 +136,10 @@ body {
   cursor: pointer;
   display: block;
 }
- 
+  
 /* SLIDE 4 COUNTDOWN */
-
 .countdown {
-  position: absolute ;
+  position: absolute;
   top: var(--countdown-top);
   left: var(--countdown-left);
   transform: translate(-50%, -50%);
@@ -155,11 +151,11 @@ body {
 .countdown h3 {
   font-size: 25px;
   margin-bottom: 15px;
-  font-weight: bold ;
+  font-weight: bold;
 }
 
 .timer {
-  display: ruby-text ;
+  display: flex;
   justify-content: center;
   gap: 20px;
 }
@@ -182,7 +178,6 @@ body {
 }
 
 /* SLIDE 6 RSVP */
-
 .rsvp-box {
   position: absolute;
   top: var(--rsvp-top);
@@ -291,7 +286,6 @@ body {
 }
 
 /* SLIDE 7 LOKASI */
-
 .location-button {
   position: absolute;
   top: var(--location-top);
@@ -300,7 +294,6 @@ body {
 }
 
 /* SLIDE 9 GALERI */
-
 .gallery-box {
   position: absolute;
   top: var(--gallery-top);
@@ -376,7 +369,6 @@ body {
 }
 
 /* ANIMASI */
-
 .feature-button,
 .main-button,
 .rsvp-box {
@@ -403,14 +395,13 @@ body {
   font-size: 10px;
   opacity: .7;
 }
-
 </style>
 </head>
 
 <body>
 
 <!-- AUDIO MUSIK UNDANGAN -->
-<audio id="Sound.mp3" loop preload="auto">
+<audio id="bgMusic" loop preload="auto">
   <source src="Sound.mp3" type="audio/mpeg">
   Browser Anda tidak mendukung elemen audio.
 </audio>
@@ -425,7 +416,7 @@ body {
 <!-- SLIDE 1 -->
 <section class="slide">
   <video class="video-bg" autoplay muted loop playsinline>
-    <source src="yes.mp4" type="video/mp4">
+    <source src="ya.mp4" type="video/mp4">
   </video>
 
   <div class="content">
@@ -444,7 +435,7 @@ body {
 <!-- SLIDE 2 -->
 <section class="slide">
   <video class="video-bg" autoplay muted loop playsinline>
-    <source src="2.mp4" type="video/mp4">
+    <source src="01.mp4" type="video/mp4">
   </video>
   <span class="slide-number">02 / 10</span>
 </section>
@@ -520,7 +511,7 @@ body {
     <h2>RSVP & Ucapan</h2>
     <p>Konfirmasi kehadiran & sampaikan doa terbaik.</p>
 
-    <form id="rsvpForm" action="http://rsvp-feature.netlify.app" method="POST">
+    <form id="rsvpForm" action="https://rsvp-feature.netlify.app" method="POST">
       <input type="text" name="nama" placeholder="Nama lengkap" required>
 
       <select name="kehadiran" required>
@@ -584,13 +575,20 @@ body {
     <h2>Our Gallery</h2>
 
     <div class="gallery-grid">
-      <img src="Banja8.jpg" onclick="showImage(this.src)">
+      <img src="Banjar1.jpg" onclick="showImage(this.src)">
       <img src="Banjar2.jpg" onclick="showImage(this.src)">
-      <img src="guw.jpg" onclick="showImage(this.src)">
+      <img src="Banjar3.jpg" onclick="showImage(this.src)">
+      <img src="Banjar4.jpg" onclick="showImage(this.src)">
+      <img src="Banjar 5.jpg" onclick="showImage(this.src)">
+      <img src="Banjar6.jpg" onclick="showImage(this.src)">
       <img src="Banjar7.jpg" onclick="showImage(this.src)">
-      <img src="Banjar10.jpg" onclick="showImage(this.src)">
+      <img src="Banja8.jpg" onclick="showImage(this.src)">
       <img src="Banjar9.jpg" onclick="showImage(this.src)">
-      <img src="tungku.jpg" onclick="showImage(this.src)">
+      <img src="Banjar10.jpg" onclick="showImage(this.src)">
+      <img src="Sek.jpg" onclick="showImage(this.src)">
+      <img src="Tungku.jpg" onclick="showImage(this.src)">
+      <img src="Guw.jpg" onclick="showImage(this.src)">
+      <img src="20260914_234617_184.jpg" onclick="showImage(this.src)">
     </div>
   </div>
 
@@ -621,7 +619,7 @@ body {
    0. KONTROL MUSIK / AUTOPLAY
 ================================= */
 
-const music = document.getElementById("Sound.mp3");
+const music = document.getElementById("bgMusic");
 const musicBtn = document.getElementById("musicBtn");
 
 function playAudio() {
@@ -721,7 +719,7 @@ setInterval(updateCountdown, 1000);
    4. RSVP & LIVE GUESTBOOK INTERAKTIF
 ================================= */
 
-const RSVP_ENDPOINT = "http://rsvp-feature.netlify.app";
+const RSVP_ENDPOINT = "https://rsvp-feature.netlify.app";
 
 async function loadComments() {
   const commentList = document.getElementById("commentList");
@@ -828,4 +826,4 @@ function showImage(src) {
 </script>
 
 </body>
-</html> 
+</html>
