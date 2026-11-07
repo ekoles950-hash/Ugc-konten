@@ -3,17 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Undangan Pernikahan - Yesheka & Ali</title>
+<title>Undangan Pernikahan</title>
 
 <style>
 :root {
-  --countdown-top: 50%; 
-  --countdown-left: 50%;
-  --countdown-width: 85%;
+  /* ATUR POSISI FITUR DI SINI */
+  --countdown-top: 40%;
+  --countdown-left: 60%;
+  --countdown-width: 50%;
 
   --instagram-top: 88%;
-  --rsvp-top: 50%;
-  --location-top: 70%;
+  --rsvp-top: 45%;
+  --location-top: 60%;
   --gallery-top: 50%;
 
   --text-color: #000;
@@ -65,6 +66,13 @@ body {
   z-index: 0;
 }
 
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
 .content {
   position: absolute;
   inset: 0;
@@ -78,6 +86,7 @@ body {
 }
 
 /* SLIDE 1 */
+
 .guest-box {
   color: white;
   text-shadow: 0 2px 8px #000;
@@ -90,7 +99,7 @@ body {
 }
 
 #guestName {
-  font-size: 28px;
+  font-size: 30px;
   margin-bottom: 25px;
 }
 
@@ -98,7 +107,7 @@ body {
   border: 1px solid white;
   padding: 13px 30px;
   color: white;
-  background: rgba(0,0,0,.3); 
+  background: rgba(0,0,0,.2); 
   border-radius: 30px;
   text-decoration: none;
   cursor: pointer;
@@ -106,7 +115,8 @@ body {
   font-size: 14px;
 }
 
-/* TOMBOL INSTAGRAM & LOKASI */
+/* SLIDE 3 */
+
 .instagram-buttons {
   position: absolute;
   top: var(--instagram-top);
@@ -114,9 +124,8 @@ body {
   transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   width: 220px;
-  z-index: 3;
 }
 
 .feature-button {
@@ -125,81 +134,79 @@ body {
   border-radius: 30px;
   text-decoration: none;
   color: white;
-  background: rgba(0,0,0,.4);
-  font-size: 13px;
+  background: rgba(0,0,0,.3);
+  font-size: 14px;
   cursor: pointer;
   display: block;
-  text-align: center;
 }
+ 
+/* SLIDE 4 COUNTDOWN */
 
-/* COUNTDOWN */
 .countdown {
-  position: absolute;
+  position: absolute ;
   top: var(--countdown-top);
   left: var(--countdown-left);
   transform: translate(-50%, -50%);
   width: var(--countdown-width);
   color: white;
   text-shadow: 0 2px 5px black;
-  text-align: center;
-  z-index: 3;
 }
 
 .countdown h3 {
-  font-size: 20px;
+  font-size: 25px;
   margin-bottom: 15px;
-  font-weight: bold;
+  font-weight: bold ;
 }
 
 .timer {
-  display: flex;
+  display: ruby-text ;
   justify-content: center;
-  gap: 10px;
+  gap: 20px;
 }
 
 .time-box {
   min-width: 55px;
-  padding: 8px 4px;
-  background: rgba(0,0,0,.45);
+  padding: 10px 5px;
+  background: rgba(0,0,0,.35);
   border: 1px solid rgba(255,255,255,.6);
   border-radius: 8px;
 }
 
 .time-box strong {
   display: block;
-  font-size: 20px;
+  font-size: 23px;
 }
 
 .time-box span {
-  font-size: 9px;
+  font-size: 10px;
 }
 
-/* RSVP BOX */
+/* SLIDE 6 RSVP */
+
 .rsvp-box {
   position: absolute;
   top: var(--rsvp-top);
   left: 50%;
   transform: translate(-50%, -50%);
   width: min(92%, 420px);
-  max-height: 85%;
+  max-height: 88%;
   overflow-y: auto;
-  padding: 20px;
-  background: rgba(255,255,255,.4);
-  backdrop-filter: blur(6px);
+  padding: 22px;
+  background: rgba(255,255,255,.35);
+  backdrop-filter: blur(5px);
   border-radius: 12px;
   color: var(--text-color);
   text-align: center;
-  z-index: 3;
 }
 
 .rsvp-box h2 {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 5px;
 }
 
 .rsvp-box p {
-  font-size: 11px;
-  margin-bottom: 10px;
+  font-size: 12px;
+  margin-bottom: 12px;
 }
 
 .rsvp-box input,
@@ -207,10 +214,10 @@ body {
 .rsvp-box textarea {
   display: block;
   width: 100%;
-  padding: 9px;
-  margin: 6px 0;
+  padding: 10px;
+  margin: 7px 0;
   border: 1px solid rgba(0,0,0,.4);
-  background: rgba(255,255,255,.85);
+  background: rgba(255,255,255,.75);
   border-radius: 5px;
   color: black;
   font-family: inherit;
@@ -233,19 +240,20 @@ body {
   font-size: 11px;
 }
 
+/* KOTAK DAFTAR UCAPAN / KOMENTAR LIVE */
 .comment-container {
-  margin-top: 12px;
-  max-height: 140px;
+  margin-top: 15px;
+  max-height: 150px;
   overflow-y: auto;
   text-align: left;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.65);
   border-radius: 8px;
   padding: 8px;
   border: 1px solid rgba(0,0,0,.15);
 }
 
 .comment-item {
-  padding: 6px;
+  padding: 8px;
   border-bottom: 1px solid rgba(0,0,0,.1);
   font-size: 11px;
 }
@@ -263,30 +271,36 @@ body {
 }
 
 .comment-status {
-  font-size: 9px;
-  padding: 1px 5px;
+  font-size: 10px;
+  padding: 1px 6px;
   border-radius: 4px;
   color: white;
 }
 
-.status-hadir { background: #2e7d32; }
-.status-tidak { background: #c62828; }
+.status-hadir {
+  background: #2e7d32;
+}
+
+.status-tidak {
+  background: #c62828;
+}
 
 .comment-text {
-  color: #333;
+  color: #444;
   word-break: break-word;
 }
 
-/* LOKASI BUTTON */
+/* SLIDE 7 LOKASI */
+
 .location-button {
   position: absolute;
   top: var(--location-top);
   left: 50%;
   transform: translate(-50%, -50%);
-  z-index: 3;
 }
 
-/* GALERI */
+/* SLIDE 9 GALERI */
+
 .gallery-box {
   position: absolute;
   top: var(--gallery-top);
@@ -295,31 +309,29 @@ body {
   width: 90%;
   max-height: 85%;
   overflow-y: auto;
-  padding: 12px;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(4px);
+  padding: 10px;
+  background: rgba(255,255,255,.25);
+  backdrop-filter: blur(3px);
   border-radius: 10px;
-  text-align: center;
-  z-index: 3;
 }
 
 .gallery-box h2 {
   color: white;
-  margin-bottom: 12px;
-  font-size: 20px;
+  margin-bottom: 15px;
+  text-shadow: 0 2px 5px black;
 }
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
 }
 
 .gallery-grid img {
   width: 100%;
   aspect-ratio: 1/1;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
 }
 
@@ -339,7 +351,9 @@ body {
   object-fit: contain;
 }
 
-.lightbox.active { display: flex; }
+.lightbox.active {
+  display: flex;
+}
 
 /* TOMBOL MUSIK FLOATING */
 .music-control {
@@ -358,6 +372,26 @@ body {
   justify-content: center;
   cursor: pointer;
   backdrop-filter: blur(5px);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+}
+
+/* ANIMASI */
+
+.feature-button,
+.main-button,
+.rsvp-box {
+  animation: appear 1s ease;
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .slide-number {
@@ -369,176 +403,225 @@ body {
   font-size: 10px;
   opacity: .7;
 }
+
 </style>
 </head>
 
 <body>
 
 <!-- AUDIO MUSIK UNDANGAN -->
-<audio id="bgMusic" loop preload="auto">
+<audio id="Sound.mp3" loop preload="auto">
   <source src="Sound.mp3" type="audio/mpeg">
+  Browser Anda tidak mendukung elemen audio.
 </audio>
 
-<!-- TOMBOL MUSIK FLOATING -->
+<!-- TOMBOL MUSIK FLOATING (PLAY/PAUSE) -->
 <button class="music-control" id="musicBtn" onclick="toggleMusic()" title="Play/Pause Musik">
   🎵
 </button>
 
 <div id="invitation">
 
-  <!-- SLIDE 1: COVER -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="ya.mp4" type="video/mp4">
-    </video>
-    <div class="content">
-      <div class="guest-box">
-        <p>Kepada Yth.</p>
-        <h1 id="guestName">Tamu Undangan</h1>
-        <button class="main-button" onclick="openInvitation()">
-          Buka Undangan
-        </button>
+<!-- SLIDE 1 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="yes.mp4" type="video/mp4">
+  </video>
+
+  <div class="content">
+    <div class="guest-box">
+      <p>Kepada Yth.</p>
+      <h1 id="guestName">Tamu Undangan</h1>
+      <button class="main-button" onclick="openInvitation()">
+        Buka Undangan
+      </button>
+    </div>
+  </div>
+  <span class="slide-number">01 / 10</span>
+</section>
+
+
+<!-- SLIDE 2 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="2.mp4" type="video/mp4">
+  </video>
+  <span class="slide-number">02 / 10</span>
+</section>
+
+
+<!-- SLIDE 3 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="3.mp4" type="video/mp4">
+  </video>
+
+  <div class="instagram-buttons">
+    <a class="feature-button" href="https://www.instagram.com/_yesheka?dlrf=MmYzNG54aWllZjN2" target="_blank">@_yesheka</a>
+    <a class="feature-button" href="https://www.instagram.com/liii_mhmmd?psln=MWFuMHU0aWt3YmR4dQ==" target="_blank">@lii_mhmmd</a>
+  </div>
+
+  <span class="slide-number">03 / 10</span>
+</section>
+
+
+<!-- SLIDE 4 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="4.mp4" type="video/mp4">
+  </video>
+
+  <div class="countdown">
+    <h3></h3>
+
+    <div class="timer">
+      <div class="time-box">
+        <strong id="days">00</strong>
+        <span>HARI</span>
+      </div>
+
+      <div class="time-box">
+        <strong id="hours">00</strong>
+        <span>JAM</span>
+      </div>
+
+      <div class="time-box">
+        <strong id="minutes">00</strong>
+        <span>MENIT</span>
+      </div>
+
+      <div class="time-box">
+        <strong id="seconds">00</strong>
+        <span>DETIK</span>
       </div>
     </div>
-    <span class="slide-number">01 / 08</span>
-  </section>
+  </div>
 
-  <!-- SLIDE 2: PROFIL MEMPELAI -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="01.mp4" type="video/mp4">
-    </video>
-    <div class="instagram-buttons">
-      <a class="feature-button" href="https://www.instagram.com/_yesheka" target="_blank">@_yesheka</a>
-      <a class="feature-button" href="https://www.instagram.com/liii_mhmmd" target="_blank">@lii_mhmmd</a>
-    </div>
-    <span class="slide-number">02 / 08</span>
-  </section>
+  <span class="slide-number">04 / 10</span>
+</section>
 
-  <!-- SLIDE 3: 3.mp4 -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="3.mp4" type="video/mp4">
-    </video>
-    <span class="slide-number">03 / 08</span>
-  </section>
 
-  <!-- SLIDE 4: COUNTDOWN -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="4.mp4" type="video/mp4">
-    </video>
-    <div class="countdown">
-      <h3>Hitung Mundur Acara</h3>
-      <div class="timer">
-        <div class="time-box">
-          <strong id="days">00</strong>
-          <span>HARI</span>
-        </div>
-        <div class="time-box">
-          <strong id="hours">00</strong>
-          <span>JAM</span>
-        </div>
-        <div class="time-box">
-          <strong id="minutes">00</strong>
-          <span>MENIT</span>
-        </div>
-        <div class="time-box">
-          <strong id="seconds">00</strong>
-          <span>DETIK</span>
-        </div>
+<!-- SLIDE 5 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="5.mp4" type="video/mp4">
+  </video>
+  <span class="slide-number">05 / 10</span>
+</section>
+
+
+<!-- SLIDE 6 RSVP -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="6.mp4" type="video/mp4">
+  </video>
+
+  <div class="rsvp-box">
+    <h2>RSVP & Ucapan</h2>
+    <p>Konfirmasi kehadiran & sampaikan doa terbaik.</p>
+
+    <form id="rsvpForm" action="http://rsvp-feature.netlify.app" method="POST">
+      <input type="text" name="nama" placeholder="Nama lengkap" required>
+
+      <select name="kehadiran" required>
+        <option value="">Hadir ga yaa</option>
+        <option value="Hadir">InsyaAllah hadir</option>
+        <option value="Tidak Hadir">Mohon maaf, tidak dapat hadir</option>
+      </select>
+
+      <input type="number" name="jumlah" placeholder="Jumlah orang" min="1" max="10">
+
+      <textarea name="ucapan" rows="3" placeholder="Tuliskan doa dan ucapan..." required></textarea>
+
+      <button type="submit">Kirim Ucapan</button>
+      <div id="formStatus"></div>
+    </form>
+
+    <!-- KOTAK DAFTAR UCAPAN INTERAKTIF (LIVE) -->
+    <div class="comment-container" id="commentList">
+      <div class="comment-item">
+        <span class="comment-text" style="color: #777; text-align: center; display: block;">Memuat ucapan tamu...</span>
       </div>
     </div>
-    <span class="slide-number">04 / 08</span>
-  </section>
+  </div>
 
-  <!-- SLIDE 5: LOKASI -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="6.mp4" type="video/mp4">
-    </video>
-    <a href="https://goo.gl/maps/6TXkq95iap6mLPnG8" target="_blank" class="feature-button location-button">
-      📍 Petunjuk Lokasi (Google Maps)
-    </a>
-    <span class="slide-number">05 / 08</span>
-  </section>
+  <span class="slide-number">06 / 10</span>
+</section>
 
-  <!-- SLIDE 6: 5.mp4 -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="5.mp4" type="video/mp4">
-    </video>
-    <span class="slide-number">06 / 08</span>
-  </section>
 
-  <!-- SLIDE 7: RSVP & UCAPAN -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="8.mp4" type="video/mp4">
-    </video>
-    <div class="rsvp-box">
-      <h2>RSVP & Ucapan</h2>
-      <p>Konfirmasi kehadiran & sampaikan doa terbaik.</p>
+<!-- SLIDE 7 LOKASI -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="7.mp4" type="video/mp4">
+  </video>
 
-      <form id="rsvpForm" action="https://rsvp-feature.netlify.app" method="POST">
-        <input type="text" name="nama" placeholder="Nama lengkap" required>
-        <select name="kehadiran" required>
-          <option value="">Konfirmasi Kehadiran</option>
-          <option value="Hadir">InsyaAllah hadir</option>
-          <option value="Tidak Hadir">Mohon maaf, tidak dapat hadir</option>
-        </select>
-        <input type="number" name="jumlah" placeholder="Jumlah orang" min="1" max="10">
-        <textarea name="ucapan" rows="3" placeholder="Tuliskan doa dan ucapan..." required></textarea>
-        <button type="submit">Kirim Ucapan</button>
-        <div id="formStatus"></div>
-      </form>
+  <a href="https://goo.gl/maps/6TXkq95iap6mLPnG8"
+     target="_blank"
+     class="feature-button location-button">
+    Lihat Lokasi
+  </a>
 
-      <div class="comment-container" id="commentList">
-        <div class="comment-item">
-          <span class="comment-text" style="color: #777; text-align: center; display: block;">Memuat ucapan...</span>
-        </div>
-      </div>
+  <span class="slide-number">07 / 10</span>
+</section>
+
+
+<!-- SLIDE 8 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="8.mp4" type="video/mp4">
+  </video>
+  <span class="slide-number">08 / 10</span>
+</section>
+
+
+<!-- SLIDE 9 GALERI -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="9.mp4" type="video/mp4">
+  </video>
+
+  <div class="gallery-box">
+    <h2>Our Gallery</h2>
+
+    <div class="gallery-grid">
+      <img src="Banja8.jpg" onclick="showImage(this.src)">
+      <img src="Banjar2.jpg" onclick="showImage(this.src)">
+      <img src="guw.jpg" onclick="showImage(this.src)">
+      <img src="Banjar7.jpg" onclick="showImage(this.src)">
+      <img src="Banjar10.jpg" onclick="showImage(this.src)">
+      <img src="Banjar9.jpg" onclick="showImage(this.src)">
+      <img src="tungku.jpg" onclick="showImage(this.src)">
     </div>
-    <span class="slide-number">07 / 08</span>
-  </section>
+  </div>
 
-  <!-- SLIDE 8: GALERI FOTO -->
-  <section class="slide">
-    <video class="video-bg" autoplay muted loop playsinline>
-      <source src="9.mp4" type="video/mp4">
-    </video>
-    <div class="gallery-box">
-      <h2>Galeri Foto</h2>
-      <div class="gallery-grid">
-        <img src="Banjar1.jpg" onclick="showImage(this.src)" alt="Foto 1">
-        <img src="Banjar2.jpg" onclick="showImage(this.src)" alt="Foto 2">
-        <img src="Banjar3.jpg" onclick="showImage(this.src)" alt="Foto 3">
-        <img src="Banjar4.jpg" onclick="showImage(this.src)" alt="Foto 4">
-        <img src="Banjar 5.jpg" onclick="showImage(this.src)" alt="Foto 5">
-        <img src="Banjar6.jpg" onclick="showImage(this.src)" alt="Foto 6">
-        <img src="Banjar7.jpg" onclick="showImage(this.src)" alt="Foto 7">
-        <img src="Banja8.jpg" onclick="showImage(this.src)" alt="Foto 8">
-        <img src="Banjar9.jpg" onclick="showImage(this.src)" alt="Foto 9">
-        <img src="Banjar10.jpg" onclick="showImage(this.src)" alt="Foto 10">
-        <img src="Sek.jpg" onclick="showImage(this.src)" alt="Foto Sek">
-        <img src="Tungku.jpg" onclick="showImage(this.src)" alt="Foto Tungku">
-        <img src="Guw.jpg" onclick="showImage(this.src)" alt="Foto Guw">
-        <img src="20260914_234617_184.jpg" onclick="showImage(this.src)" alt="Foto 2026">
-      </div>
-    </div>
-    <span class="slide-number">08 / 08</span>
-  </section>
+  <span class="slide-number">09 / 10</span>
+</section>
+
+
+<!-- SLIDE 10 -->
+<section class="slide">
+  <video class="video-bg" autoplay muted loop playsinline>
+    <source src="end.mp4" type="video/mp4">
+  </video>
+  <span class="slide-number">10 / 10</span>
+</section>
 
 </div>
 
-<!-- LIGHTBOX PEMBESAR FOTO -->
+
+<!-- PEMBESAR FOTO GALERI -->
 <div class="lightbox" id="lightbox" onclick="this.classList.remove('active')">
-  <img id="lightboxImage" alt="Preview Foto">
+  <img id="lightboxImage">
 </div>
+
 
 <script>
-/* MUSIK */
-const music = document.getElementById("bgMusic");
+
+/* =================================
+   0. KONTROL MUSIK / AUTOPLAY
+================================= */
+
+const music = document.getElementById("Sound.mp3");
 const musicBtn = document.getElementById("musicBtn");
 
 function playAudio() {
@@ -560,6 +643,7 @@ function toggleMusic() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  playAudio();
   loadComments();
 });
 
@@ -570,23 +654,40 @@ document.addEventListener("click", function startOnFirstClick() {
   document.removeEventListener("click", startOnFirstClick);
 }, { once: true });
 
-/* TAMU UNDANGAN */
+
+/* =================================
+   1. NAMA TAMU DARI URL
+================================= */
+
 const params = new URLSearchParams(window.location.search);
 const guest = params.get("to");
-document.getElementById("guestName").textContent = guest ? decodeURIComponent(guest.replace(/\+/g, " ")) : "Tamu Undangan";
 
-/* BUKA UNDANGAN */
+document.getElementById("guestName").textContent =
+  guest ? decodeURIComponent(guest.replace(/\+/g, " ")) : "Tamu Undangan";
+
+
+/* =================================
+   2. BUKA UNDANGAN
+================================= */
+
 function openInvitation() {
   playAudio();
+
   const invitation = document.getElementById("invitation");
+
   invitation.scrollTo({
     top: window.innerHeight,
     behavior: "smooth"
   });
 }
 
-/* COUNTDOWN ACARA (21 NOVEMBER 2026) */
-const weddingDate = new Date("2026-11-21T08:00:00+07:00").getTime();
+
+/* =================================
+   3. COUNTDOWN
+   TANGGAL: 21 NOVEMBER 2026
+================================= */
+
+const weddingDate = new Date("2026-11-21T08:00:00+08:00").getTime();
 
 function updateCountdown() {
   const now = new Date().getTime();
@@ -599,20 +700,32 @@ function updateCountdown() {
     return;
   }
 
-  document.getElementById("days").textContent = String(Math.floor(distance / (1000 * 60 * 60 * 24))).padStart(2, '0');
-  document.getElementById("hours").textContent = String(Math.floor((distance / (1000 * 60 * 60)) % 24)).padStart(2, '0');
-  document.getElementById("minutes").textContent = String(Math.floor((distance / (1000 * 60)) % 60)).padStart(2, '0');
-  document.getElementById("seconds").textContent = String(Math.floor((distance / 1000) % 60)).padStart(2, '0');
+  document.getElementById("days").textContent =
+    Math.floor(distance / (1000 * 60 * 60 * 24));
+
+  document.getElementById("hours").textContent =
+    Math.floor((distance / (1000 * 60 * 60)) % 24);
+
+  document.getElementById("minutes").textContent =
+    Math.floor((distance / (1000 * 60)) % 60);
+
+  document.getElementById("seconds").textContent =
+    Math.floor((distance / 1000) % 60);
 }
 
 updateCountdown();
 setInterval(updateCountdown, 1000);
 
-/* RSVP & KOMENTAR */
-const RSVP_ENDPOINT = "https://rsvp-feature.netlify.app";
+
+/* =================================
+   4. RSVP & LIVE GUESTBOOK INTERAKTIF
+================================= */
+
+const RSVP_ENDPOINT = "http://rsvp-feature.netlify.app";
 
 async function loadComments() {
   const commentList = document.getElementById("commentList");
+  
   try {
     const response = await fetch(RSVP_ENDPOINT);
     const data = await response.json();
@@ -622,6 +735,7 @@ async function loadComments() {
       data.reverse().forEach(item => {
         const isHadir = item.kehadiran === "Hadir";
         const badgeClass = isHadir ? "status-hadir" : "status-tidak";
+        
         const html = `
           <div class="comment-item">
             <div class="comment-name">
@@ -652,6 +766,7 @@ function escapeHtml(text) {
 
 document.getElementById("rsvpForm").addEventListener("submit", async function(e) {
   e.preventDefault();
+
   const status = document.getElementById("formStatus");
   const formData = new FormData(this);
   const dataObj = Object.fromEntries(formData.entries());
@@ -662,7 +777,9 @@ document.getElementById("rsvpForm").addEventListener("submit", async function(e)
     const response = await fetch(RSVP_ENDPOINT, {
       method: "POST",
       body: formData,
-      headers: { "Accept": "application/json" }
+      headers: {
+        "Accept": "application/json"
+      }
     });
 
     if (response.ok || response.type === "opaque") {
@@ -687,20 +804,27 @@ document.getElementById("rsvpForm").addEventListener("submit", async function(e)
         </div>
       `;
       commentList.insertAdjacentHTML('afterbegin', newCommentHtml);
+
     } else {
       status.textContent = "Gagal mengirim. Silakan coba kembali.";
     }
+
   } catch(error) {
     status.textContent = "Terima kasih! Konfirmasi dan ucapan Anda telah terkirim.";
     this.reset();
   }
 });
 
-/* GALERI LIGHTBOX */
+
+/* =================================
+   5. GALERI FOTO
+================================= */
+
 function showImage(src) {
   document.getElementById("lightboxImage").src = src;
   document.getElementById("lightbox").classList.add("active");
 }
+
 </script>
 
 </body>
