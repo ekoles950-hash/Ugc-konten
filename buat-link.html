@@ -75,10 +75,10 @@
   <p class="subtitle">Masukkan nama & alamat tamu sesuai contoh</p>
 
   <label>Nama Tamu / Gelar</label>
-  <input type="text" id="guestInput" placeholder="Contoh: Ust. Eko Lestyo">
+  <input type="text" id="guestInput" placeholder="Contoh: Ustad ali">
 
   <label>Alamat / Wilayah</label>
-  <input type="text" id="addressInput" placeholder="Contoh: Grogol">
+  <input type="text" id="addressInput" placeholder="Contoh: Genteng">
 
   <button onclick="generateLink()">Generate Pesan & Link</button>
 
@@ -108,14 +108,14 @@
     currentGuest = name;
     currentAddress = address;
 
-    // Ambil URL dasar website Anda (misal domain Vercel Anda)
-    const baseUrl = window.location.origin + window.location.pathname.replace("buat-link.html", "");
+    // Mengambil domain utama website (mengabaikan nama file html di belakang)
+    const baseUrl = window.location.origin + "/";
     
-    // Gabungkan parameter untuk URL undangan
-    let paramText = name;
-    if(address) paramText += `/${address}`;
+    // Format teks tamu dan alamat, ubah spasi menjadi tanda tambah (+) agar bersih dari %20
+    let formattedName = name.replace(/\s+/g, '+');
+    let formattedAddress = address ? '/' + address.replace(/\s+/g, '+') : '';
 
-    finalUrl = `${baseUrl}?to=${encodeURIComponent(paramText)}`;
+    finalUrl = `${baseUrl}?to=${formattedName}${formattedAddress}`;
 
     document.getElementById("generatedLink").href = finalUrl;
     document.getElementById("generatedLink").textContent = finalUrl;
@@ -129,9 +129,6 @@
   }
 
   function shareWhatsApp() {
-    // Format pesan disesuaikan persis seperti contoh screenshot dari Anda
-    let formatAlamat = currentAddress ? `/${currentAddress}` : '';
-    
     const message = `Assalamu'alaikum. Wr. Wb.\n\nDengan Rahmat dan Ridho Allah SWT. Kami bermaksud memberikan kabar gembira, serta memohon do'a restu Bapak/Ibu/Saudara/i pada acara pernikahan kami, klik tautan berikut untuk menuju undangan pernikahan kami.\n\n${finalUrl}\n\nMerupakan suatu kehormatan dan kebahagiaan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan do'a restu pada acara Pernikahan kami. Atas perhatiannya kami sampaikan terimakasih.\n\nWassalamu'alaikum. Wr. Wb`;
     
     const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
