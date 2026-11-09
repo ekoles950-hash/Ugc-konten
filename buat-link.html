@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buat Pesan Undangan - Yesheka & Ali</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Georgia, serif; }
+  body {
+    background: #111;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+  .card {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 12px;
+    width: 100%;
+    max-width: 420px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
+  h2 { font-size: 20px; margin-bottom: 5px; text-align: center; }
+  p.subtitle { font-size: 11px; color: #ccc; margin-bottom: 20px; text-align: center; }
+  label { font-size: 12px; display: block; margin-bottom: 5px; color: #ddd; }
+  input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    background: rgba(255, 255, 255, 0.85);
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    color: #000;
+  }
+  button {
+    width: 100%;
+    padding: 11px;
+    background: #c5a059;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 13px;
+    margin-bottom: 10px;
+    transition: 0.2s;
+  }
+  button:hover { background: #b08d4c; }
+  .result-box {
+    margin-top: 15px;
+    background: rgba(0,0,0,0.4);
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    display: none;
+  }
+  .result-box a { color: #8ab4f8; text-decoration: none; display: block; margin-bottom: 8px; word-break: break-all; }
+  .wa-btn {
+    background: #25d366;
+    margin-top: 5px;
+  }
+  .wa-btn:hover { background: #20ba5a; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h2>Kirim Undangan WA</h2>
+  <p class="subtitle">Masukkan nama & alamat tamu sesuai contoh</p>
+
+  <label>Nama Tamu / Gelar</label>
+  <input type="text" id="guestInput" placeholder="Contoh: Ust. Eko Lestyo">
+
+  <label>Alamat / Wilayah</label>
+  <input type="text" id="addressInput" placeholder="Contoh: Grogol">
+
+  <button onclick="generateLink()">Generate Pesan & Link</button>
+
+  <div class="result-box" id="resultBox">
+    <label>Link Undangan:</label>
+    <a id="generatedLink" href="#" target="_blank">-</a>
+    
+    <button onclick="copyLink()">Salin Link Saja</button>
+    <button class="wa-btn" onclick="shareWhatsApp()">Kirim Format WA Seperti Contoh</button>
+  </div>
+</div>
+
+<script>
+  let finalUrl = "";
+  let currentGuest = "";
+  let currentAddress = "";
+
+  function generateLink() {
+    const name = document.getElementById("guestInput").value.trim();
+    const address = document.getElementById("addressInput").value.trim();
+
+    if (!name) {
+      alert("Silakan masukkan nama tamu terlebih dahulu!");
+      return;
+    }
+
+    currentGuest = name;
+    currentAddress = address;
+
+    // Ambil URL dasar website Anda (misal domain Vercel Anda)
+    const baseUrl = window.location.origin + window.location.pathname.replace("buat-link.html", "");
+    
+    // Gabungkan parameter untuk URL undangan
+    let paramText = name;
+    if(address) paramText += `/${address}`;
+
+    finalUrl = `${baseUrl}?to=${encodeURIComponent(paramText)}`;
+
+    document.getElementById("generatedLink").href = finalUrl;
+    document.getElementById("generatedLink").textContent = finalUrl;
+    document.getElementById("resultBox").style.display = "block";
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(finalUrl).then(() => {
+      alert("Link berhasil disalin!");
+    });
+  }
+
+  function shareWhatsApp() {
+    // Format pesan disesuaikan persis seperti contoh screenshot dari Anda
+    let formatAlamat = currentAddress ? `/${currentAddress}` : '';
+    
+    const message = `Assalamu'alaikum. Wr. Wb.\n\nDengan Rahmat dan Ridho Allah SWT. Kami bermaksud memberikan kabar gembira, serta memohon do'a restu Bapak/Ibu/Saudara/i pada acara pernikahan kami, klik tautan berikut untuk menuju undangan pernikahan kami.\n\n${finalUrl}\n\nMerupakan suatu kehormatan dan kebahagiaan apabila Bapak/Ibu/Saudara/i berkenan hadir dan memberikan do'a restu pada acara Pernikahan kami. Atas perhatiannya kami sampaikan terimakasih.\n\nWassalamu'alaikum. Wr. Wb`;
+    
+    const waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
+    window.open(waUrl, '_blank');
+  }
+</script>
+
+</body>
+</html>
